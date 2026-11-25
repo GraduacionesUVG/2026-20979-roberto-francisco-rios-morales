@@ -47,12 +47,12 @@ sin desfases):
 
 ## Requisitos Previos
 
-- **Windows 10 u 11.** El controlador busca SUMO en la ruta de instalación por defecto de Windows (ver
-  [Notas de portabilidad](#notas-de-portabilidad)).
-- **Python 3.13** (es la versión con la que se hicieron las corridas) y `pip`.
-- **Eclipse SUMO 1.23.1**, instalado en `C:\Program Files (x86)\Eclipse\Sumo`. Descarga:
+- **Windows 10 u 11**: es el sistema en el que se desarrolló y probó el proyecto.
+- **Python 3.13** (la versión con la que se hicieron las corridas) y `pip`.
+- **Eclipse SUMO 1.23.1**, en cualquier carpeta de instalación. Descarga:
   <https://sumo.dlr.de/docs/Downloads.php>
-- La variable de entorno **`SUMO_HOME`** apuntando a la instalación de SUMO. El instalador la define; ver
+- La variable de entorno **`SUMO_HOME`**, que apunta a la instalación de SUMO. El código la usa para
+  encontrar los ejecutables de SUMO y el instalador de Windows la define automáticamente; ver
   [`src/.env.example`](src/.env.example).
 - **Git**.
 - Recomendado: un procesador de 6 núcleos físicos o más. La evaluación en paralelo deja de acelerar a
@@ -75,12 +75,21 @@ sin desfases):
    pip install -r requirements.txt
    ```
 
-3. Verificar la variable de entorno de SUMO. El proyecto no usa credenciales ni lee un archivo `.env`;
-   [`src/.env.example`](src/.env.example) documenta la única variable necesaria.
+   > **Sobre `package.json`:** el proyecto está escrito en Python, no en Node.js, así que no lleva
+   > `package.json`. Sus dependencias, con versiones fijas, están en
+   > [`src/requirements.txt`](src/requirements.txt), que es el archivo equivalente en Python. Así lo
+   > indica la [FAQ de la guía de entrega](https://csuvg.github.io/Guia-entrega-trabajo-graduacion/docs/faq.html):
+   > un proyecto que no es de Node.js no necesita `package.json`, pero debe incluir el archivo de
+   > dependencias de su tecnología (`requirements.txt` en el caso de Python).
+
+3. Verificar la variable de entorno `SUMO_HOME`. El controlador la usa para ubicar `sumo` y, si no está
+   definida o no apunta a una instalación válida, se detiene con un mensaje que lo explica. El proyecto no
+   usa credenciales ni lee un archivo `.env`; [`src/.env.example`](src/.env.example) documenta la única
+   variable necesaria.
 
    ```powershell
    echo $env:SUMO_HOME
-   # Si sale vacío:
+   # Si sale vacío, definirla con la carpeta donde se instaló SUMO y abrir una terminal nueva:
    setx SUMO_HOME "C:\Program Files (x86)\Eclipse\Sumo"
    ```
 
@@ -157,12 +166,13 @@ con el paso 2.
 
 ### Notas de portabilidad
 
-El código se desarrolló y ejecutó en Windows, y estas rutas absolutas quedaron fijas en el código:
+El algoritmo y los scripts de análisis encuentran SUMO con la variable `SUMO_HOME`
+(`controller.py`, método `get_sumo_binary`, y `video/grabar_sumo.py`), así que no dependen de la carpeta
+de instalación. Las únicas rutas absolutas que quedan en el código no intervienen en la ejecución del
+algoritmo:
 
-- `controller.py`, método `get_sumo_binary`: ruta a `sumo.exe`. Hay que cambiarla si SUMO está instalado
-  en otra carpeta o en otro sistema operativo.
-- `video/grabar_sumo.py` (`SUMO_GUI`) y `video/custom_config.yml` (`ffmpeg_bin`): rutas que solo usa el
-  video explicativo.
+- `video/custom_config.yml` (`ffmpeg_bin`): FFmpeg para renderizar el video explicativo. La forma de
+  actualizarla está en [`src/video/README.md`](src/video/README.md).
 - `diagramas.py` y `mapa_aristas.py` (`DESTINO`): carpeta donde se guardaban las figuras para el
   documento LaTeX de la tesis.
 
@@ -211,7 +221,7 @@ Video demostrativo: [/demo/demo.mp4](demo/demo.mp4)
 │   ├── map.*, *.net.xml, typemap.xml, osmNetconvert.typ.xml   Red y mapa de la zona 1
 │   ├── robustez/, saturacion/   Resultados ligeros de la tesis
 │   ├── video/         Generación del video explicativo con ManimGL
-│   ├── requirements.txt
+│   ├── requirements.txt   Dependencias de Python (equivale a package.json, que no aplica)
 │   └── .env.example
 ├── LICENSE
 └── README.md

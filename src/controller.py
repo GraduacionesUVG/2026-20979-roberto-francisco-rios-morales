@@ -86,9 +86,22 @@ class Controller:
 
     def get_sumo_binary(self):
         """
-        obtener la ruta del programa para conectar una sesion
+        obtener la ruta del programa para conectar una sesion.
+
+        Se arma con la variable de entorno SUMO_HOME, que define el instalador
+        de SUMO, para no depender de la carpeta de instalacion de una maquina.
         """
-        return r"C:\Program Files (x86)\Eclipse\Sumo\bin\sumo.exe"
+        sumo_home = os.environ.get("SUMO_HOME")
+        if not sumo_home:
+            raise EnvironmentError("La variable de entorno SUMO_HOME no esta definida. "
+                                   "Debe apuntar a la carpeta de instalacion de Eclipse SUMO, "
+                                   r"p. ej. C:\Program Files (x86)\Eclipse\Sumo")
+
+        binary = os.path.join(sumo_home, "bin", "sumo.exe" if os.name == "nt" else "sumo")
+        if not os.path.isfile(binary):
+            raise FileNotFoundError(f"No se encontro el ejecutable de SUMO en {binary}. "
+                                    "Revisar que SUMO_HOME apunte a la instalacion de SUMO")
+        return binary
     
 
     def start_sumo_conn(self, noSteps = True, noWarns = True):

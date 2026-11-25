@@ -19,6 +19,7 @@ Uso, desde esta carpeta:
 """
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -36,8 +37,23 @@ SALIDA = AQUI / "salida"
 sys.path.insert(0, str(AQUI))
 import datos  # noqa: E402
 
-SUMO_GUI = r"C:\Program Files (x86)\Eclipse\Sumo\bin\sumo-gui.exe"
-VIA = "406701908"          # corredor que mas mejora (analisis espacial de la tesis)
+def sumo_gui():
+    """
+    ruta de sumo-gui armada con la variable de entorno SUMO_HOME, igual que
+    Controller.get_sumo_binary, para no depender de la carpeta de instalacion
+    """
+    sumo_home = os.environ.get("SUMO_HOME")
+    if not sumo_home:
+        raise EnvironmentError("La variable de entorno SUMO_HOME no esta definida. "
+                               "Debe apuntar a la carpeta de instalacion de Eclipse SUMO")
+    binario = Path(sumo_home) / "bin" / ("sumo-gui.exe" if os.name == "nt" else "sumo-gui")
+    if not binario.is_file():
+        raise FileNotFoundError(f"No se encontro sumo-gui en {binario}. "
+                                "Revisar que SUMO_HOME apunte a la instalacion de SUMO")
+    return str(binario)
+
+
+VIA ="406701908"          # corredor que mas mejora (analisis espacial de la tesis)
 ANCHO, ALTO = 1290, 840     # pixeles de cada captura (proporcion del panel de la escena)
 T_FIN_CLIP = 1500           # segundos de simulacion que cubre el clip
 CADA = 3                    # una captura cada 3 s de simulacion
@@ -100,7 +116,7 @@ def grabar(plan, red):
     ajustes.write_text(AJUSTES_GUI, encoding="utf-8")
     tripinfo = SALIDA / f"sumo_{plan}.tripinfo.xml"
 
-    cmd = [SUMO_GUI, "-n", str(RAIZ / red), "-r", str(RAIZ / datos.meta()["escenario"]["routes"]),
+    cmd = [sumo_gui(), "-n", str(RAIZ / red), "-r", str(RAIZ / datos.meta()["escenario"]["routes"]),
            "--tripinfo-output", str(tripinfo), "--end", str(MAX_PASOS), "-g", str(ajustes),
            "--start", "--quit-on-end", "--window-size", "1500,1100", "--window-pos", "40,40"] + BANDERAS
     traci.start(cmd, port=8817, label=plan)
