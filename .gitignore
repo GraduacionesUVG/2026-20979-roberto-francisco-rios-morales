@@ -1,0 +1,40 @@
+# Dependencias
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+*.py[cod]
+
+# Entornos virtuales de Python
+.venv/
+venv/
+env/
+
+# Variables de entorno con credenciales reales (sí se sube .env.example)
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Builds, cachés y temporales
+dist/
+build/
+coverage/
+.cache/
+.ipynb_checkpoints/
+*.log
+*.tmp
+tmp/
+temp/
