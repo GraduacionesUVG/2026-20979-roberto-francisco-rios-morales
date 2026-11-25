@@ -1,4 +1,4 @@
-# Algoritmo genético simple para la búsqueda de configuraciones eficientes de semáforos en la zona 1 de Ciudad de Guatemala
+# Desarrollo de un algoritmo genético simple para la búsqueda de configuraciones eficientes de semáforos con simulaciones en zona 1 de Ciudad de Guatemala
 
 Trabajo de graduación de Ingeniería en Ciencias de la Computación y Tecnologías de la Información,
 Universidad del Valle de Guatemala, 2026.
@@ -31,6 +31,18 @@ sin desfases):
 - La función objetivo bajó **51.2 %** (J de 878.1 s a 428.8 s, en la generación 126 de 150).
 - Simulada de nuevo con 35 combinaciones de demanda y semilla, la solución superó al punto de partida en
   todas, con una mediana de reducción de 40.3 %, y no trabó la red en ninguna.
+
+## Repositorio de desarrollo
+
+La investigación y el desarrollo del proyecto se hicieron en el repositorio
+[robertriosm/upmega](https://github.com/robertriosm/upmega). Ahí está el historial completo del trabajo
+(49 commits): prototipos, pruebas, experimentos con el algoritmo, análisis de resultados y la generación
+del video explicativo.
+
+La carpeta [`src/`](src/) de este repositorio es una copia del código de `upmega` en su último commit
+(`ff9a8e8`, del 24 de noviembre de 2026), con un solo cambio posterior: `controller.py` y
+`video/grabar_sumo.py` ubican SUMO mediante la variable de entorno `SUMO_HOME` en lugar de una ruta fija
+(ver [Notas de portabilidad](#notas-de-portabilidad)).
 
 ## Tecnologías Utilizadas
 
@@ -211,7 +223,7 @@ Video demostrativo: [/demo/demo.mp4](demo/demo.mp4)
 ├── capturas/          Capturas del sistema (captura-01.png … captura-11.png)
 ├── demo/              Video demostrativo (demo.mp4)
 ├── docs/              Informe final y consentimiento firmado
-├── src/               Código fuente
+├── src/               Código fuente (copia del repositorio de desarrollo upmega)
 │   ├── main.py        Punto de entrada: corre el algoritmo genético
 │   ├── sga.py         Algoritmo genético simple (PyGAD): cromosoma, operadores, registro
 │   ├── controller.py  Interacción con SUMO: decodificación del cromosoma y evaluación
